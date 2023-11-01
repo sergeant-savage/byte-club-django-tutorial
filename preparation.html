@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Prep</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+</head>
+
+<body>
+  <section class="section">
+    <div class="columns">
+      <div class="column is-offset-one-fifth is-three-fifths">
+        <div class="box">
+
+          <h1 class="title is-1">Preparation</h1>
+          <h2 class="subtitle is-3">(Skip if using Replit)</h2>
+        </div>
+        <div class="box content is-large">
+          <h3>Prerequisites</h3>
+          <p>
+            The very first thing we'll need is an installation of Python. If you are on Windows or MacOS, grab the
+            installer from <a href="https://www.python.org/downloads/">the official Python website</a> and proceed with
+            the installation. If you are on Linux (Ubuntu, Fedora, Arch, Raspberry Pi OS, etc), you should already have
+            some version of Python installed.
+          </p>
+          <p>Once we have some version of Python, we can verify by running the following command:</p>
+          <pre>&LT;python command here&gt; --version</pre>
+          <p>
+            I am writing this tutorial on Linux, so I'll run <code>python3 --version</code>. On Windows, the Python
+            command may be <code>py</code> or <code>py -3</code>, and on MacOS, the command may be <code>python</code>.
+            This should give us an output of <code>Python 3.xx.xx</code> (just make sure that the Python version is
+            around 3.11)
+          </p>
+          <p>
+            Once you have Python installed, check to see if <abbr title="PIP Installs Packages">PIP</abbr>, the Python
+            package manager, is installed. Pip will let us use other people's libraries (which just means their existing
+            code) with our own. On Linux you should be able to run
+            <code>pip3 --version</code>, or if that fails, <code>pip --version</code>. If Python is installed correctly,
+            You should see something like the following:
+          </p>
+          <pre>pip 23.x.xx from /usr/lib/python3/dist-packages/pip (python 3.xx)</pre>
+          <p>On Windows and Mac OS, you may need to run the following instead:</p>
+          <pre>&LT;python command here&gt; -m pip --version</pre>
+          <h3>Setting up a Python dev environment</h3>
+          <p>
+            While I could start the tutorial here, it is usually best practice to install necessary Python libraries
+            locally in a virtual environment. What does that mean? Now that your computer has a installation of Python,
+            using pip to install libraries will install them globally, meaning your entire computer. While this isn't
+            necessarily a bad thing, most of the time, we just need libraries for one project. That's where virtual
+            environments come in. We can create a virtual environment for our project, and install all our libraries,
+            there. To do this, we'll use the help of the built-in Python <code>venv</code> module. Navigate (and/or make
+            it if it doesn't exist) to the directory (folder) where you store your code projects (I prefer having a
+            <code>Projects</code> directory in my home folder). Once you are there, open a terminal (CMD on Windows) in
+            that directory. Then run the following command to create a virtual environment:
+          </p>
+          <pre>&lt;python command here&gt; -m venv DjangoEnv</pre>
+          <p>
+            Great! Now we have our virtual environment ready. To enter the folder we just made in the terminal, we can
+            run the following command in
+            the terminal:
+          </p>
+          <pre>cd DjangoEnv</pre>
+          <p>This will enter the ByteClubBlog directory created earlier. To activate the virtual environment, run the
+            following:</p>
+          <p>For Linux/MacOS (bash/zsh):</p>
+          <pre>source bin/activate</pre>
+          <p>For Windows (CMD, for Powershell use activate.ps1 instead):</p>
+          <pre>Scripts\activate.bat</pre>
+          <blockquote>
+            Note: If you need to deactivate the virtual environment, you can run the <code>deactivate</code> command.
+          </blockquote>
+          <h3>Installing Django</h3>
+          <p>
+            Now that we have our virtual environment activated, we can install Django into it using pip. Run the
+            following commands:
+          </p>
+          <pre>&lt;pip command here&gt; install django</pre>
+          <p>
+            As I'm on Linux, I'll run <code>pip3 install django</code>. If you are on Windows or MacOS, it'll be
+            <code>&lt;python command here&gt; -m pip install django</code>. To verify we've installed django correctly,
+            run the following:
+          </p>
+          <pre>&lt;python command here&gt; -m django --version</pre>
+          <p>You should receive output confirming you have Django version <code>4.x</code> installed.</p>
+        </div>
+        <div class="box">
+
+          <nav class="level ">
+            <div class="level-item">
+              <a class="button is-large" href="index.html">Back</a>
+            </div>
+            <div class="level-item has-text-centered">
+              <div>
+                <p class="heading">Page</p>
+                <p class="title">2</p>
+              </div>
+            </div>
+            <div class="level-item">
+              <a class="button is-large" href="setup.html">Next</a>
+            </div>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</body>
+
+</html>

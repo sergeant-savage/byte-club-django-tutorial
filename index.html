@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Byte Club Replacement Tutorial</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+
+</head>
+
+<body>
+  <section class="section">
+    <div class="columns">
+      <div class="column is-offset-one-fifth is-three-fifths">
+        <div class="box">
+
+          <h1 class="title is-1">Rewriting the Byte Club Website</h1>
+          <h2 class="subtitle is-3">A Django Tutorial</h2>
+        </div>
+        <div class="box content is-large">
+          <h3>Intro</h3>
+          <p>
+            Hi! If you are reading this, that means the task of rewriting the Byte Club website has fallen to you.
+            This tutorial will teach you how to create dynamic web apps using Python and the Django framework.
+            What do I mean when I say dynamic websites? That just means that they can have posts created by a user.
+            For example, YouTube is dynamic, because it lets its users create and view posts, as well as update
+            them, and delete them.
+          </p>
+          <p>
+            This pattern is so common, it even has its own acronym. <abbr title="Create Read Update Delete">CRUD</abbr>,
+            which stands for Create, Read, Update, Delete. And yes this acronym sucks.
+          </p>
+          <h3>How?</h3>
+          <p>To understand how Django works, you first must have a basic understanding of how websites work</p>
+          <figure style="width: 300;">
+            <img src="img/1_diagram.png"
+              alt="a diagram showing the client making a web request and the server returning HTML">
+            <figcaption>Note: Client refers to the browser used by the user</figcaption>
+          </figure>
+          <p>
+            This is how static websites work. The client sends a GET request, which tells the server to <em>get</em> a
+            specific resource, in this case, an HTML document. Static websites, unlike dynamic websites, cannot receive
+            posts created by
+            users. They simply display the same text each time they are requested by the browser. For example, this site
+            is a static site.
+          </p>
+          <p>
+            We, of course, are not interested in making static sites. It's much more interesting to build the next
+            YouTube, TikTok, or Instagram, then it is to just render the same text over and over again. Here is how
+            dynamic sites work:
+          </p>
+          <figure>
+            <img src="img/2_diagram.png"
+              alt="a diagram showing the client making a web request to a URL of a specific post and the server processing it, then returning HTML ">
+          </figure>
+          <p>
+            This is how the R in CRUD works. The server finds the post that the user requested in the DB (developer
+            lingo for database), and then, using HTML templates stored on the server, fills in the details, kind of like
+            filling out a form. Once the template is completely filled out, (which happens in less than a second) the
+            server then sends the finished HTML over to the client, where it can be rendered (AKA, the browser displays
+            it).
+          </p>
+          <p>
+            The processes for the C, U, and D are slightly more involved. When creating a post, the user fills
+            out a form with all the details for said post, like text, images, etc. Once they are done, the server uses
+            the data in this form to send a POST request, which tells the server to create a new
+            database entry. Updating is similar, except instead of a POST request, the client sends a PUT request, which
+            tells the server to <em>put</em> the new info in the old DB entry. When it comes to deleting
+            posts, the client sends a DELETE request, and the server deletes the corresponding DB entry.
+          </p>
+          <p>
+            Here's how it it comes together in Django (for the R in CRUD):
+          </p>
+          <figure>
+            <img src="img/3_basicdjango.png" alt="a diagram showing a Django codebase">
+          </figure>
+          <p>
+            It might look a bit confusing at first, so I'll explain it. The <code>urls.py</code> file serves as an
+            entryway. It takes the user's GET request and sends it over to the view that corresponds to the URL of the
+            request in <code>views.py</code>, which is in charge of returning HTML responses for that specific URL. The
+            view then gets data using the <code>models.py</code> file. This file contains code that lets us access the
+            database the way we want. Once the code in the <code>views.py</code> file has received the appropriate data
+            from the database, it uses an existing HTML template to format it. Once this is done, it gets sent over to
+            the user as HTML.
+          </p>
+          <p>
+            That might seem really complicated to do, but it's actually a breeze to do in Django. And once you know how
+            to work with Django, it's easy to make brand new ideas. So, without further explanation, lets get started on
+            replacing the Byte Club website.
+          </p>
+
+        </div>
+        <div class="box">
+
+          <nav class="level ">
+            <div class="level-item">
+              <button class="button is-large" type="button" disabled>Back</button>
+            </div>
+            <div class="level-item has-text-centered">
+              <div>
+                <p class="heading">Page</p>
+                <p class="title">1</p>
+              </div>
+            </div>
+            <div class="level-item">
+              <a class="button is-large" href="preparation.html">Next</a>
+            </div>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </section>
+</body>
+
+</html>
