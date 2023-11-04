@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Prep</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <link rel="stylesheet" href="styles/main.css">
+</head>
+
+<body>
+  <section class="section">
+    <div class="columns">
+      <div class="column is-offset-one-fifth is-three-fifths">
+        <div class="box">
+
+          <h1 class="title is-1">Setting Up Routes</h1>
+        </div>
+        <div class="box content is-large">
+          <h3>Creating the Blog Application</h3>
+          <blockquote>
+            Now that we are well into this tutorial, always have the project open in both a text editor and a terminal.
+          </blockquote>
+          <p>
+            Now that everything is done in setup for the project, we can start scaffolding out the app. In your
+            terminal, run the following:
+          </p>
+          <pre>python3 manage.py startapp blog</pre>
+          <p>
+            As you can see, this command starts an app called blog within our Django project. In other news, the sky is
+            blue. In all seriousness, this command is how you start an app in Django. Now lets take a look inside.
+          </p>
+          <figure>
+            <img src="img/7_blogappstructure.png" alt="The blog app structure">
+          </figure>
+          <p>
+            We've already seen what's inside the project folder <code>ByteClubBlog</code>, so lets take a look at the
+            new arrivals. Among the new files, there are 2 very important ones: <code>views.py</code> and
+            <code>models.py</code>. If you remember back to the first part of this tutorial, you'll know that these
+            files are where the actual rendering of the HTML happens (<code>views.py</code>) and where the database
+            interaction takes place (<code>models.py</code>). This is where most of our code will go. Speaking of
+            database, we can see that a new one has been created, called <code>db.sqlite3</code>.
+          </p>
+          <h3>Writing our first View</h3>
+          <p>
+            Like I said earlier, our views are going to be responsible for a crux of the work our Django app will do,
+            so, with that said, let's write our first one.
+          </p>
+          <p>
+            Our first view will be a simple home view, as this website is the Byte Club website first, and blog second.
+            Start by opening the <code>views.py</code> file in the blog directory. It should look something like this.
+          </p>
+          <figure>
+
+            <img src="img/8_viewpy_start.png" alt="initial views.py content">
+          </figure>
+          <p>
+            As you can see, there is already an import: the <code>render</code> function from the
+            <code>django.shortcuts</code> module. We'll make use of it later. For now, let's have our view return an
+            HTTP response to the user. Here's how it looks:
+          </p>
+          <pre class="codeblock">
+from django.shortcuts import render
+from django.http import HttpResponse
+
+# Create your views here.
+def home(request):
+    return HttpResponse("&lt;h1&gt;Hello&lt;/h1&gt;)</pre>
+          <p>
+            The <code>home</code> function takes one parameter, request. We discussed the different types of requests
+            earlier, and we can do different things depending on type of request, but for now, we'll just send back a
+            response, which is just an <code>HttpResponse</code> containing some HTML.
+          </p>
+          <p>
+            That's our first view done. Now we need to make sure the server knows where it is. To do this, let's create
+            a new file called <code>urls.py</code> in the <code>blog/</code> directory. This file will handle the urls
+            for the blog app.
+          </p>
+          <pre class="codeblock">
+
+          </pre>
+        </div>
+        <div class="box">
+
+          <nav class="level ">
+            <div class="level-item">
+              <a class="button is-large" href="setup.html">Back</a>
+            </div>
+            <div class="level-item has-text-centered">
+              <div>
+                <p class="heading">Page</p>
+                <p class="title">2</p>
+              </div>
+            </div>
+            <div class="level-item">
+              <a class="button is-large" href=".html">Next</a>
+            </div>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</body>
+
+</html>

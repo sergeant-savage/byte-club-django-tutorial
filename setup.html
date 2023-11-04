@@ -19,7 +19,7 @@
         <div class="box content is-large">
           <h3>Scaffolding out our Project</h3>
           <p>
-            Now that we have Django install, we can get started by setting up the project.
+            Now that we have Django installed, we can get started by setting up the project.
           </p>
           <h4>Replit Setup</h4>
           <p>
@@ -39,7 +39,8 @@
           <h4>Computer Setup</h4>
           <p>
             To set up our Django project on a computer, navigate to the directory where we created the virtual
-            environment. From there, run the following command to create a new Django project:
+            environment. Activate this virtual environment. From there, run the following command to create a new Django
+            project:
           </p>
           <pre>django-admin createproject ByteClubBlog</pre>
           <p>
@@ -48,7 +49,23 @@
             command to start the server locally:
           </p>
           <pre>&lt;python command here&gt; manage.py runserver</pre>
-          <p>You should be able to click on the link, or type the address into your browser and see the result</p>
+          <blockquote>
+            From now on, I'll be using the Linux command for Python. Whenever you see <code>python3</code>, just replace
+            it with the Python command your system uses.
+          </blockquote>
+          <p>Something like this should appear:</p>
+          <img src="img/4_djangofirstruncli.png" alt="A terminal showing text output of the following command">
+          <p>You should be able to click on the link, or type the address into your browser and see the result:</p>
+          <img src="img/5_djangofirstrun.png" alt="The default Django webpage">
+          <blockquote>
+            The address <code>127.0.0.1</code> is a special one, as it refers to your local computer. You can replace it
+            with <code>localhost</code> in the URL bar and nothing will change. This is because <code>localhost</code>
+            also refers to your computer.
+          </blockquote>
+          <p>
+            From now on, you can start your Django server like this. To stop it, simply type <kbd>CTRL+C</kbd> in the
+            terminal.
+          </p>
           <p>
             Next, open this folder in your favorite code editor. I generally recommend <a
               href="code.visualstudio.com">Visual Studio Code</a> for beginners, but you can use any you like. I myself
@@ -56,16 +73,9 @@
           </p>
           <h3>But First Some Explanation</h3>
           <p>If you examine the the file structure, you'll see something like this:</p>
-          <pre>
-            ByteClubBlog/
-            &Tab;manage.py
-            &Tab;ByteClubBlog/
-            &Tab;&Tab;__init__.py
-            &Tab;&Tab;settings.py
-            &Tab;&Tab;urls.py
-            &Tab;&Tab;wsgi.py
-            &Tab;&Tab;asgi.py
-          </pre>
+          <figure>
+            <img src="img/6_djangoprojectstructure.png" alt="The folder structure in a Django project">
+          </figure>
           <p>Here is what each file does:</p>
           <ul>
             <li><code>manage.py</code> helps us the developer interact with the project, like running it, setting up
@@ -98,7 +108,6 @@
             users application. Each application has it's own views, and database schemes. We will touch on this later
             on.
           </blockquote>
-          <h3>Creating the Blog Application</h3>
         </div>
         <div class="box">
           <nav class="level ">
@@ -112,7 +121,7 @@
               </div>
             </div>
             <div class="level-item">
-              <a class="button is-large" href="">Next</a>
+              <a class="button is-large" href="setting-up-routes.html">Next</a>
             </div>
           </nav>
         </div>
