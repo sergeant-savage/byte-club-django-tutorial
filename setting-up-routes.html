@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-  <title>Prep</title>
+  <title>Writing our First View</title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
@@ -15,33 +15,13 @@
       <div class="column is-offset-one-fifth is-three-fifths">
         <div class="box">
 
-          <h1 class="title is-1">Setting Up Routes</h1>
+          <h1 class="title is-1">Setting Up Routes and Views</h1>
         </div>
         <div class="box content is-large">
-          <h3>Creating the Blog Application</h3>
           <blockquote>
             Now that we are well into this tutorial, always have the project open in both a text editor and a terminal.
+            Also have the virtual environment activated
           </blockquote>
-          <p>
-            Now that everything is done in setup for the project, we can start scaffolding out the app. In your
-            terminal, run the following:
-          </p>
-          <pre>python3 manage.py startapp blog</pre>
-          <p>
-            As you can see, this command starts an app called blog within our Django project. In other news, the sky is
-            blue. In all seriousness, this command is how you start an app in Django. Now lets take a look inside.
-          </p>
-          <figure>
-            <img src="img/7_blogappstructure.png" alt="The blog app structure">
-          </figure>
-          <p>
-            We've already seen what's inside the project folder <code>ByteClubBlog</code>, so lets take a look at the
-            new arrivals. Among the new files, there are 2 very important ones: <code>views.py</code> and
-            <code>models.py</code>. If you remember back to the first part of this tutorial, you'll know that these
-            files are where the actual rendering of the HTML happens (<code>views.py</code>) and where the database
-            interaction takes place (<code>models.py</code>). This is where most of our code will go. Speaking of
-            database, we can see that a new one has been created, called <code>db.sqlite3</code>.
-          </p>
           <h3>Writing our first View</h3>
           <p>
             Like I said earlier, our views are going to be responsible for a crux of the work our Django app will do,
@@ -49,16 +29,18 @@
           </p>
           <p>
             Our first view will be a simple home view, as this website is the Byte Club website first, and blog second.
-            Start by opening the <code>views.py</code> file in the blog directory. It should look something like this.
+            To get us started, open up the <code>views.py</code> file created in the <code>blog</code> directory. It 
+            should look something like this:
           </p>
-          <figure>
-
-            <img src="img/8_viewpy_start.png" alt="initial views.py content">
-          </figure>
+          <pre class="codeblock">
+from django.shortcuts import render
+          </pre>
           <p>
-            As you can see, there is already an import: the <code>render</code> function from the
-            <code>django.shortcuts</code> module. We'll make use of it later. For now, let's have our view return an
-            HTTP response to the user. Here's how it looks:
+            All this starter code does is it imports the commonly used <code>render</code> function from the 
+            <code>django.shortcuts</code> module. We will be using it later, so feel free to leave it in.
+          </p>
+          <p>
+            Now that we have it open, we can write a simple view that returns an HTTP response.
           </p>
           <pre class="codeblock">
 from django.shortcuts import render
@@ -66,23 +48,510 @@ from django.http import HttpResponse
 
 # Create your views here.
 def home(request):
-    return HttpResponse("&lt;h1&gt;Hello&lt;/h1&gt;)</pre>
+    return HttpResponse("&lt;h1&gt;Hello&lt;/h1&gt;")</pre>
           <p>
-            The <code>home</code> function takes one parameter, request. We discussed the different types of requests
-            earlier, and we can do different things depending on type of request, but for now, we'll just send back a
-            response, which is just an <code>HttpResponse</code> containing some HTML.
+            First we import the <code>HttpResponse</code> class, which lets us return HTTP responses to the user. The 
+            new <code>home</code> function takes one parameter, request. We discussed the different types of requests
+            earlier, and we can do different things depending on the type of request, but for now, we'll just send 
+            back a response, which is just an <code>HttpResponse</code> containing some HTML.
           </p>
           <p>
-            That's our first view done. Now we need to make sure the server knows where it is. To do this, let's create
-            a new file called <code>urls.py</code> in the <code>blog/</code> directory. This file will handle the urls
-            for the blog app.
+            That's our first view done. Now we need to make sure the server knows where it is. If you recall from the
+            diagram from earlier, it's the <code>urls.py</code> file's job to let the server know which view to use.
+            With that in mind, let's open up the <code>urls.py</code> file in the <code>ByteClubBlog</code> directory.
+            You should see something like this:
           </p>
           <pre class="codeblock">
+from django.contrib import admin
+from django.urls import path
 
+urlpatterns = [
+    path('admin/', admin.site.urls),
+]
           </pre>
+          <p>
+            This code handles the routing. When it receives a request to a specific URL, it will match it to an 
+            appropriate view, or delegate it. We can see it actually already has one entry, the URL pattern for the admin
+            site. It delegates any URL path starting with "admin/" to the <code>admin.sites.urls</code> module, which is another 
+            <code>urls.py</code> file to handle everything related to the admin site. More specifically, any URL 
+            starting "admin/" has the "admin/" part removed, and the rest of the URL sent to the 
+            <code>admin.sites.urls</code> file. We will actually be doing this exact same thing, since all of our URLs
+            related to the blog should be kept together.  We can do this like so: 
+          </p>
+          <pre>
+from django.contrib import admin
+from django.urls import path, include
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('', include('blog.urls')),
+]
+          </pre>
+          <p>
+            We start by adding an entry to the <code>urlpatterns</code> list using the <code>path</code> function. 
+            This function takes 2 parameters, the actual URL part, and the view or URLs file we want to associate it 
+            with. In this case, we want to associate any URL paths starting with '' to our blog app's 
+            <code>urls.py</code>. To do this, we'll use the <code>include</code> function we imported. This 
+            function tells Django to delegate the remaining part of the URL to a separate <code>urls.py</code> file. 
+            In this case, we want to use a <code>urls.py</code> file in our blog app, so we include 'blog.urls'.
+          </p>
+          <blockquote>
+            Note: The first parameter of the <code>path</code> function is actually what comes right after the website
+            name. For example, the URL path of "example.com" is "" (in Python '' and "" are the same thing), since 
+            nothing comes after the name of the website. For "example.com/hello" the URL path is "hello/". Another thing 
+            to note, is that Django will look for an exact match when associating URLs to views or to other 
+            <code>urls.py</code> files. So while 'admin/' technically starts with '', it 100% matches the existing admin 
+            URL pattern entry.
+          </blockquote>
+          <p>
+            Now that we've told Django to associate all URL paths starting with '' to our blog's <code>urls.py</code>, we 
+            should probably make it. Create a new file called <code>urls.py</code> in the blog directory, and type this out the 
+            following:
+          </p>
+          <pre>
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('', views.home, name="site-home"),
+]
+          </pre>
+          <p>
+            This <code>urls.py</code> works much like the other one. When it gets sent a URL pattern by the first URLs 
+            file, it tries to match the pattern to one in the list. In this case, we have the '' pattern set up as an 
+            entry. Anything that matches that gets referred to the view we just wrote. We do this by importing the whole
+            <code>views.py</code> file using <code>from . import views</code>. <code>.</code> is just how Python refers
+            to the current directory. Now that it's imported, we can use our view function by writing 
+            <code>views.home</code>, which simply tells Python to use the home function from the view file. Lastly, we add 
+            a name parameter, which will come in handy later. 
+          </p>
+          <p>
+            And now, the result. We've written our view, and we've informed Django when to use it. So, if you start the
+            server, and navigate to the URL, you'll see it! That's our very first view. Here's a recap on how it works. When the
+            server receives a request to the '' URL path, it looks in the project-level <code>urls.py</code> file for 
+            matches. The first URL pattern in the list match with URL paths that start with 'admin/'. '' doesn't match 
+            that, so it looks for the next one. The next one matches with URL paths that start with '', which does 
+            match the pattern. So, the server looks at the next argument to the <code>path</code> function, which is 
+            <code>include('blog.urls')</code>. 
+            That in turn points to the <code>urls.py</code> in our blog app. This <code>urls.py</code> file 
+            matches to everything after the first pattern that was matched. Since the first pattern that matched was '',
+            and there was nothing after, the pattern that matches this is once again ''! So, the server runs the 
+            <code>views.home</code> function, which is actually the view function we just wrote in our <code>views.py</code> 
+            file. And like that, the user receives a website in a fraction of a second.
+          </p>
+          <p>
+            Now that we have our first view done, let's write a second view for the page where all the blog articles will be. 
+            Remember the steps to writing views:
+          </p>
+          <ol>
+            <li>Write view in <code>views.py</code> file</li>
+            <li>Associate view with URL pattern in <code>urls.py</code></li>
+          </ol>
+          <p>
+            Done? Here's what I did for reference:
+          </p>
+          <p><code>blog/urls.py</code></p>
+          <pre>
+# --snipped for brevity--
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('', views.home, name='site-home'),
+    path('blog/', views.blog, name='blog-home'),
+]</pre>
+          <p><code>blog/views.py</code></p>
+          <pre>
+# --snip--
+
+def blog(request):
+    return HttpResponse("&lt;h1&gt;Byte Club Blog&lt;/h1&gt;")</pre>
+          <h3>Fixing the Glaring Issue</h3>
+          <p>
+            I don't know about you guys, but I'm getting annoyed at one thing. Right now, we are writing our HTML inside 
+            our Python code, and that's driving me nuts. And with more and more views, and more and more content in our
+            HTML, then our code will only get more complex and difficult to manage. Fortunately, Django has us covered 
+            with HTML templates. These templates let us just create HTML files and have Django render them for us. By 
+            default, Django will look for a <code>templates</code> directory inside each of our installed apps. Since 
+            it's possible to have many apps inside a Django project and thus, many templates directories, we want to 
+            make sure our blog templates are kept separate and easy to find. Django suggests we make a subdirectory in 
+            the templates directory with the name of the specific app we want our templates to be used for. Within the 
+            new <code>templates</code> directory make a directory called "blog". This is where our blog's templates will
+            be.
+          </p>
+          <p>
+            Now that we have our templates directory set up, lets go ahead and create our HTML templates. I'll provide 
+            samples, but feel free to create your own. Note: make sure that your HTML templates are in the directory we 
+            just made.
+          </p>
+          <p>
+            Here's what I did for the 2 templates:
+          </p>
+          <p><code>index.html</code></p>
+          <pre>
+&lt;!DOCTYPE html&gt;
+&lt;html lang&#x3D;&quot;en&quot;&gt;
+  &lt;head&gt;
+    &lt;title&gt;&lt;&#x2F;title&gt;
+    &lt;meta charset&#x3D;&quot;UTF-8&quot;&gt;
+    &lt;meta name&#x3D;&quot;viewport&quot; content&#x3D;&quot;width&#x3D;device-width, initial-scale&#x3D;1&quot;&gt;
+  &lt;&#x2F;head&gt;
+  &lt;body&gt;
+    &lt;h1&gt;Welcome to the Byte Club Website&lt;&#x2Fh1&gt;
+  &lt;&#x2F;body&gt;
+&lt;&#x2F;html&gt;
+</pre>
+          <p><code>blog.html</code></p>
+         <pre>
+&lt;!DOCTYPE html&gt;
+&lt;html lang&#x3D;&quot;en&quot;&gt;
+  &lt;head&gt;
+    &lt;title&gt;&lt;&#x2F;title&gt;
+    &lt;meta charset&#x3D;&quot;UTF-8&quot;&gt;
+    &lt;meta name&#x3D;&quot;viewport&quot; content&#x3D;&quot;width&#x3D;device-width, initial-scale&#x3D;1&quot;&gt;
+  &lt;&#x2F;head&gt;
+  &lt;body&gt;
+    &lt;h1&gt;Byte Club Blog&lt;&#x2F;h1&gt;
+  &lt;&#x2F;body&gt;
+&lt;&#x2F;html&gt;
+          </pre>
+          <p>
+            Now that we've written our templates, we'll have to install our app in the Django project so that Django 
+            can use them. What do I mean when I say install our app? Well, as I mentioned before, Django lets you 
+            modularly create apps that do different things, and keep them separate. Django lets you install apps so 
+            that you can use someone else's Django app in your project with just a few extra lines of code. We also 
+            have to do this so that we can make our own apps work.
+          </p>
+          <p>
+            To install our blog app, first open the <code>apps.py</code> file in the blog app. You'll see something 
+            like this:
+          </p>
+          <pre>
+from django.apps import AppConfig
+
+
+class BlogConfig(AppConfig):
+    default_auto_field = 'django.db.models.BigAutoField'
+    name = 'blog'
+          </pre>
+          <p>
+            This is our blog app's config. To install our app, we need to let Django know about this config. 
+            Fortunately, this is pretty easy. Open the <code>settings.py</code> file in the main project directory, 
+            and scroll down until you find "INSTALLED_APPS". Add an entry like so:
+          </p>
+          <pre>
+# -- snip --
+
+INSTALLED_APPS = [
+    'blog.apps.BlogConfig',
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+]
+
+# --snip--
+          </pre>
+          <p>
+            By adding <code>blog.apps.BlogConfig</code>, we tell the server that our app's config is in the blog 
+            directory, inside the <code>apps.py</code> and is the <code>BlogConfig</code> class. And that's all 
+            we have to do to install our app. Which means we can finally start using our templates. Open 
+            <code>views.py</code>. It should look like this:
+          </p>
+          <pre>
+from django.shortcuts import render
+from django.http import HttpResponse
+
+
+def home(request):
+    return HttpResponse("&lt;h1&gt;Hello&lt;/h1&gt;")
+
+
+def blog(request):
+    return HttpResponse("&lt;h1&gt;Byte Club Blog&lt;/h1&gt;")
+          </pre>
+          <p>
+            To make our views use templates, we can use the <code>render</code> function that was imported by 
+            default. This function handles all of the heavy lifting involved with rendering HTML, giving us a
+             <em>shortcut</em> to easily set up routes. We can use it like this:
+          </p>
+          <pre>
+from django.shortcuts import render
+
+def home(request):
+    return render(request, 'blog/index.html')
+
+
+def blog(request):
+    return render(request, 'blog/about.html')
+          </pre>
+          <p>
+            As you can see, the render function takes 2 required parameters, the request that is passed into the view 
+            function, and the location of the template. This is why it was important we make another folder 
+            called "blog" inside of our templates directory, so that we can easily find it in our views. We 
+            also don't need the <code>HttpResponse</code> class, because under the hood, <code>render</code> 
+            produces one.
+          </p>
+          <p>
+            Now that that's done, go ahead and start the server and open the site. What you see now should be 
+            our new templates. You can verify by right-clicking and viewing the page source. This should show 
+            HTML identical to the HTML we wrote for our templates.
+          </p>
+          <p>
+            Actually, if all we are doing is writing static pages, then we're done! We can use CSS frameworks 
+            in the head tag to make it look prettier, and add more HTML. If you want to use CSS we've written,
+            I'll show you how in a bit.
+          </p>
+          <h3>Using Django's Templating Features</h3>
+          <p>
+            If you recall back to the beginning of the tutorial, the way Django is able to show content for 
+            posts is by filling out templates. Our templates right now just show the same text over and over,
+             so lets change that. As we know, Django uses database data to fill out the HTML templates with 
+            the correct data. Since we haven't done anything with the database right now, let's just create some 
+            dummy data so I can show you how templating works when we actually do have database data. Let's add
+            some dummy data to our <code>views.py</code> file right under our imports:
+          </p>
+          <pre>
+# -- imports snipped --
+
+blog_posts = [
+    {
+        'author': 'Mariano',
+        'title': 'FIRST!!!',
+        'content': 'I am the first post!',
+        'date': 'Nov 5'
+    },
+    {
+        'author': 'Frankie',
+        'title': 'Why replacing your blood with caffeine is good',
+        'content': 'Trust me bro',
+        'date': 'Nov 4'
+    },
+    {
+        'author': 'Thomas',
+        'title': 'Why I only write my HTML in a green font',
+        'content': 'Efficiency is key!',
+        'date': 'Nov 19'
+    },
+]
+
+# -- views snipped --
+          </pre>
+          <p>
+            Now that we have this dummy data, we can use it in our view, by passing in an argument to the 
+            <code>render</code> function called <code>context</code>. This argument lets us access any data
+             that we need to fill in within the template. Since our dummy data is a bunch of dummy blog posts 
+            it only makes sense to pass it to our blog view. Let's do that now:
+          </p>
+          <pre>
+# --snip--
+
+def blog(request):
+    context = {
+        'posts': blog_posts,
+    }
+    return render(request, 'blog/blog.html', context)
+          </pre>
+          <p>
+            Within our view, we create a dictionary called context, which will hold all the dummy posts 
+            we'll be using in a key called 'posts'. We then pass it into the <code>render</code> function so that
+             we can access it within our templates. Go ahead and open up <code>blog.html</code> and make sure it 
+            has the following:
+          </p>
+          <pre>
+&lt;!DOCTYPE html&gt;
+&lt;html lang&#x3D;&quot;en&quot;&gt;
+  &lt;head&gt;
+    &lt;title&gt;&lt;&#x2F;title&gt;
+    &lt;meta charset&#x3D;&quot;UTF-8&quot;&gt;
+    &lt;meta name&#x3D;&quot;viewport&quot; content&#x3D;&quot;width&#x3D;device-width, initial-scale&#x3D;1&quot;&gt;
+&lt;&#x2F;head&gt;
+  &lt;body&gt;
+    &lt;h1&gt;Byte Club Blog Posts:&lt;&#x2F;h1&gt;
+    {% for post in posts %}
+      &lt;h1&gt;{{ post.title }}&lt;&#x2F;h1&gt;
+      &lt;p&gt;by {{ post.author }} on {{ post.date }}&lt;&#x2F;p&gt;
+      &lt;p&gt;{{ post.content }}&lt;&#x2F;p&gt;
+    {% endfor %}
+  &lt;&#x2F;body&gt;
+&lt;&#x2F;html&gt;
+          </pre>
+          <p>
+            The code in the curly brackets ({}) is what handles the heavy lifting for templating. 
+            <code>{% for post in posts %}</code> repeats the HTML inside it once for every item in our list of 
+            dummy posts, which is accessed by the <code>posts</code> variable (a name we assigned in the context). 
+            inside the for loop, we can access each individual posts data by using <code>{{ post.attribute }}</code>. 
+            For instance, we can access the post title by doing <code>{{ post.title }}</code>, and so on. We can now 
+            test this by running the server, and navigating to the blog route. You should see something like this:
+          </p>
+          <figure>
+            <img src="img/10_dummy_blog.png">
+          </figure>
+          <p>
+            And like that, we've made our dummy blog start displaying posts! Feel free to add or change the context 
+            to see what the effects are. To recap, our view uses the dictionary items passed in the context to fill 
+            out the templates we write. On top of just loops, we can also do if-statements within our templates. 
+            Suppose we want to be able to programmatically specify what the page title should be for each view, but 
+            default to one if we don't. We can do this in both of our templates like so:
+          </p>
+          <pre>
+&lt;!DOCTYPE html&gt;
+&lt;html lang&#x3D;&quot;en&quot;&gt;
+  &lt;head&gt;
+    {% if title %}
+      &lt;title&gt;{{ title }} - Byte Club&lt;&#x2F;title&gt;
+    {% else %}
+      &lt;title&gt;Byte Club Home&lt;&#x2F;title&gt;
+    {% endif %}
+    &lt;meta charset&#x3D;&quot;UTF-8&quot;&gt;
+    &lt;meta name&#x3D;&quot;viewport&quot; content&#x3D;&quot;width&#x3D;device-width, initial-scale&#x3D;1&quot;&gt;
+  &lt;&#x2F;head&gt;
+  &lt;!-- body snipped --&gt;
+          </pre>
+          <p>
+            Now that you've added it to both templates, here's how it works. If there is a key called title in the 
+            context, we use it as our title, but if there isn't, then default to "Byte Club Home". We can test this
+            by adding a title in the context of our blog view but not our home view. It should now look like this:
+          </p>
+          <pre>
+def blog(request):
+    context = {
+        'posts': posts,
+        'title': 'Blog'
+    }
+    return render(request, 'blog/blog.html', context)
+          </pre>
+          <p>
+            If we run the server to test this, and open both pages side by side, we'll see this:
+          </p>
+          <figure>
+            <img src="img/11_template_titles.png">
+          </figure>
+          <p>
+            The blog page, which we added a title to the context now uses it when being displayed, while our homepage 
+            uses our defaults.
+          </p>
+          <h3>Fixing the Repetition</h3>
+          <p>
+            While our templates work fine, the eagle eyed amongst you may have noticed something. We are repeating the
+             same <code>&lt;head&gt;</code> tags each time for our templates. As a matter of fact, we repeat everything
+            except the content of the <code>body</code> tag. Repeating ourselves is never good, as it increases the 
+            amount of places we'll have to update in future changes. The Django devs also realized this, and using the 
+            magic of templating, we can remove the repeated code. To use this magic, create a new file in the templates
+             directory of our blog app called <code>base.html</code>. Add the following:
+          </p>
+          <pre>
+&lt;!DOCTYPE html&gt;
+&lt;html lang&#x3D;&quot;en&quot;&gt;
+  &lt;head&gt;
+    {% if title %}
+      &lt;title&gt;{{title}} - Byte Club&lt;&#x2F;title&gt;
+    {% else %}
+      &lt;title&gt;Byte Club Home&lt;&#x2F;title&gt;
+    {% endif %}
+    &lt;meta charset&#x3D;&quot;UTF-8&quot;&gt;
+    &lt;meta name&#x3D;&quot;viewport&quot; content&#x3D;&quot;width&#x3D;device-width, initial-scale&#x3D;1&quot;&gt;
+&lt;&#x2F;head&gt;
+  &lt;body&gt;
+    {% block content %}
+    {% endblock %}
+  &lt;&#x2F;body&gt;
+&lt;&#x2F;html&gt;
+            </pre>
+          <p>
+            As you can see, this base file contains everything shared by our templates. In the body, we create a block 
+            called content. In a Django template, a block is a section that other templates can override. Let's 
+            specify that we want to use our base template as the base for every other template. Replace your templates
+             with the following:
+          </p>
+          <p><code>index.html</code></p>
+          <pre>
+{% extends &quot;blog&#x2F;base.html&quot; %}
+{% block content %}
+  &lt;h1&gt;Welcome to the Byte Club Website&lt;&#x2F;h1&gt;
+{% endblock content %}
+          </pre>
+          <p><code>blog.html</code></p>  
+          <pre>
+{% extends &quot;blog&#x2F;base.html&quot; %}
+{% block content %}
+  &lt;h1&gt;Byte Club Blog&lt;&#x2F;h1&gt;
+  {% for post in posts %}
+    &lt;h2&gt;{{ post.title }}&lt;&#x2F;h2&gt;
+    &lt;p&gt;by {{ post.author }} on {{ post.date }}&lt;&#x2F;p&gt;
+    &lt;p&gt;{{ post.content }}&lt;&#x2F;p&gt;
+  {% endfor %}
+{% endblock content %}
+          </pre>
+          <p>
+              We start by specifying that we want to use our <code>base.html</code> as a base by using 
+              <code>{% extends "blog/base.html" %}</code>. Next, we create a block called content again, which will 
+              override the block in our base template. And lastly, at the end of our HTML, we end the content block. 
+              And now, if you run the server, you can check to see if these new changes work. If they do, nothing will 
+              change.
+          </p>
+          <p>
+            One last thing I feel I should mention about Django templates, is that if you want to create links using the
+            <code>a</code> tag, you could hardcode the <code>href</code> to a specific URL path, or if you know where you 
+            want the link to go, you can use Django to automatically generate the link for you. For example, suppose we 
+            had the following <code>a</code> tag in a navbar to provide a link to our site home page:
+          </p>
+          <pre>&lt;a href&#x3D;&quot;&#x2F;&quot;&gt;Home&lt;&#x2F;a&gt;</pre>
+          <p>
+            To use an automatically generated link, we can change out the <code>href</code> for a Django templating URL 
+            statement that references the name we gave the corresponding route in our URLs file (told you it would come
+             in handy!):
+          </p>
+          <pre>&lt;a href&#x3D;&quot;{% url 'site-home' %}&quot;&gt;Home&lt;&#x2F;a&gt;</pre>
+          <p>
+            <code>site-home</code> is the name we gave the home view in our <code>urls.py</code> file. Now if we change 
+            those URL patterns, all our links will still continue to work!
+          </p>
+          <h3>Adding some CSS</h3>
+          <p>
+            We can use external CSS by adding the required code into our base template's <code>head</code>. For 
+            example, if I wanted to use the Bulma CSS framework, I would add the following line to the <code>head</code>:
+          </p>
+          <pre>
+&lt;link rel&#x3D;&quot;stylesheet&quot; href&#x3D;&quot;https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;npm&#x2F;bulma@0.9.4&#x2F;css&#x2F;bulma.min.css&quot;&gt;
+          </pre>
+          <p>
+            If we want to use our own  CSS, the process is slightly more involved. By default, Django looks for CSS, 
+            JavaScript, and images in a static directory. Create a directory called <code>static</code> in your blog 
+            app, and within that, create a <code>blog</code> folder. Like templates, Django searches for static 
+            files in any directory called static, so to make our blog static files easily findable, we put them in a
+             blog directory. From there you can write your CSS file within this directory. I'll assume you call it 
+            <code>main.css</code>.
+          </p>
+          <p>
+            Next, we need to tell Django we are using our own CSS/static files. Add this line to the top of your base 
+            HTML template:
+          </p>
+          <pre>{% load static %}</pre>
+          <p>
+            This loads the static files, allowing us to access them. To finally use your CSS you can add the following 
+            line to the head of the base template:
+          </p>
+          <pre>
+&lt;link rel&#x3D;&quot;stylesheet&quot; href&#x3D;&quot;{% static &#39;blog&#x2F;main.css&#39; %}&quot;&gt;
+          </pre>
+          <p>
+            <code>{% static 'blog/main.css' %}</code> generates an absolute URL to the CSS file. If you try and run 
+            the server, it should show your new styles.
+          </p>
+          <h3>Recap</h3>
+          <p>
+            Man that was a lot to get through. But we did it, so kudos to you for sticking to it! We've learned how 
+            to write our own views, how to register them in our URLs files, how to delegate URLs to other URLs files,
+            how Django templating works, and how to use your own CSS. Now that we have a static home page ready, it's 
+            up to you to decide how you want it look and how to design it with CSS and HTML! This website will be the 
+            online presence of the Byte Club, so be creative with how you design it. I'll provide a link to some 
+            samples for the tutorial, but if you are confident enough with how Django templating works, feel free to 
+            create your own instead, and only use the Django template logic instead of the whole sample template.
+          </p>
         </div>
         <div class="box">
-
           <nav class="level ">
             <div class="level-item">
               <a class="button is-large" href="setup.html">Back</a>
@@ -90,7 +559,7 @@ def home(request):
             <div class="level-item has-text-centered">
               <div>
                 <p class="heading">Page</p>
-                <p class="title">2</p>
+                <p class="title">4</p>
               </div>
             </div>
             <div class="level-item">

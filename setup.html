@@ -36,6 +36,9 @@
             project to use this new key. Once this is done, click the run button to start the Django project. You should
             see a webview pop up, confirming everything works.
           </p>
+          <blockquote>
+            For Replit, whenever I refer to terminal, I mean the shell, not the console.
+          </blockquote>
           <h4>Computer Setup</h4>
           <p>
             To set up our Django project on a computer, navigate to the directory where we created the virtual
@@ -108,6 +111,27 @@
             users application. Each application has it's own views, and database schemes. We will touch on this later
             on.
           </blockquote>
+          <h3>Creating the Blog App</h3>
+          <p>
+            Lastly we can start scaffolding out the app. In your
+            terminal, run the following:
+          </p>
+          <pre>python3 manage.py startapp blog</pre>
+          <p>
+            As you can see, this command starts an app called blog within our Django project. In other news, the sky is
+            blue. In all seriousness, this command is how you start an app in Django. Now lets take a look inside.
+          </p>
+          <figure>
+            <img src="img/7_blogappstructure.png" alt="The blog app structure">
+          </figure>
+          <p>
+            We've already seen what's inside the project folder <code>ByteClubBlog</code>, so lets take a look at the
+            new arrivals. Among the new files, there are 2 very important ones: <code>views.py</code> and
+            <code>models.py</code>. If you remember back to the first part of this tutorial, you'll know that these
+            files are where the actual rendering of the HTML happens (<code>views.py</code>) and where the database
+            interaction takes place (<code>models.py</code>). This is where most of our code will go. Speaking of
+            database, we can see that a new one has been created, called <code>db.sqlite3</code>.
+          </p>
         </div>
         <div class="box">
           <nav class="level ">
