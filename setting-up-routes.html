@@ -32,6 +32,7 @@
             To get us started, open up the <code>views.py</code> file created in the <code>blog</code> directory. It 
             should look something like this:
           </p>
+          <p><code>blog/views.py</code></p>
           <pre class="codeblock">
 from django.shortcuts import render
           </pre>
@@ -42,6 +43,7 @@ from django.shortcuts import render
           <p>
             Now that we have it open, we can write a simple view that returns an HTTP response.
           </p>
+          <p><code>blog/views.py</code></p>
           <pre class="codeblock">
 from django.shortcuts import render
 from django.http import HttpResponse
@@ -58,9 +60,10 @@ def home(request):
           <p>
             That's our first view done. Now we need to make sure the server knows where it is. If you recall from the
             diagram from earlier, it's the <code>urls.py</code> file's job to let the server know which view to use.
-            With that in mind, let's open up the <code>urls.py</code> file in the <code>ByteClubBlog</code> directory.
-            You should see something like this:
+            With that in mind, let's open up the <code>urls.py</code> file in the <code>ByteClubBlog</code> (which is 
+            named <code>django_project</code> on Replit) directory. You should see something like this:
           </p>
+          <p><code>&lt;project folder name&gt;/urls.py</code></p>
           <pre class="codeblock">
 from django.contrib import admin
 from django.urls import path
@@ -78,6 +81,7 @@ urlpatterns = [
             <code>admin.sites.urls</code> file. We will actually be doing this exact same thing, since all of our URLs
             related to the blog should be kept together.  We can do this like so: 
           </p>
+          <p><code>&lt;project folder name&gt;/urls.py</code></p>
           <pre>
 from django.contrib import admin
 from django.urls import path, include
@@ -108,6 +112,7 @@ urlpatterns = [
             should probably make it. Create a new file called <code>urls.py</code> in the blog directory, and type this out the 
             following:
           </p>
+          <p><code>blog/urls.py</code></p>
           <pre>
 from django.urls import path
 from . import views
@@ -185,7 +190,7 @@ def blog(request):
           <p>
             Here's what I did for the 2 templates:
           </p>
-          <p><code>index.html</code></p>
+          <p><code>blog/templates/blog/index.html</code></p>
           <pre>
 &lt;!DOCTYPE html&gt;
 &lt;html lang&#x3D;&quot;en&quot;&gt;
@@ -199,7 +204,7 @@ def blog(request):
   &lt;&#x2F;body&gt;
 &lt;&#x2F;html&gt;
 </pre>
-          <p><code>blog.html</code></p>
+          <p><code>blog/templates/blog/blog.html</code></p>
          <pre>
 &lt;!DOCTYPE html&gt;
 &lt;html lang&#x3D;&quot;en&quot;&gt;
@@ -224,6 +229,7 @@ def blog(request):
             To install our blog app, first open the <code>apps.py</code> file in the blog app. You'll see something 
             like this:
           </p>
+          <p>blog/apps.py</p>
           <pre>
 from django.apps import AppConfig
 
@@ -237,6 +243,7 @@ class BlogConfig(AppConfig):
             Fortunately, this is pretty easy. Open the <code>settings.py</code> file in the main project directory, 
             and scroll down until you find "INSTALLED_APPS". Add an entry like so:
           </p>
+          <p><code>&lt;project folder name&gt;/settings.py</code></p>
           <pre>
 # -- snip --
 
@@ -252,12 +259,16 @@ INSTALLED_APPS = [
 
 # --snip--
           </pre>
+          <blockquote>
+            REMEMBER THE COMMA AFTER THE ENTRY
+          </blockquote>
           <p>
             By adding <code>blog.apps.BlogConfig</code>, we tell the server that our app's config is in the blog 
             directory, inside the <code>apps.py</code> and is the <code>BlogConfig</code> class. And that's all 
             we have to do to install our app. Which means we can finally start using our templates. Open 
             <code>views.py</code>. It should look like this:
           </p>
+          <p><code>blog/views.py</code></p>
           <pre>
 from django.shortcuts import render
 from django.http import HttpResponse
@@ -275,6 +286,7 @@ def blog(request):
             default. This function handles all of the heavy lifting involved with rendering HTML, giving us a
              <em>shortcut</em> to easily set up routes. We can use it like this:
           </p>
+          <p><code>blog/views.py</code></p>
           <pre>
 from django.shortcuts import render
 
@@ -311,6 +323,7 @@ def blog(request):
             dummy data so I can show you how templating works when we actually do have database data. Let's add
             some dummy data to our <code>views.py</code> file right under our imports:
           </p>
+          <p><code>blog/views.py</code></p>
           <pre>
 # -- imports snipped --
 
@@ -343,6 +356,7 @@ blog_posts = [
              that we need to fill in within the template. Since our dummy data is a bunch of dummy blog posts 
             it only makes sense to pass it to our blog view. Let's do that now:
           </p>
+          <p><code>blog/views.py</code></p>
           <pre>
 # --snip--
 
@@ -358,6 +372,7 @@ def blog(request):
              we can access it within our templates. Go ahead and open up <code>blog.html</code> and make sure it 
             has the following:
           </p>
+          <p><code>blog/templates/blog/blog.html</code></p>
           <pre>
 &lt;!DOCTYPE html&gt;
 &lt;html lang&#x3D;&quot;en&quot;&gt;
@@ -394,6 +409,7 @@ def blog(request):
             Suppose we want to be able to programmatically specify what the page title should be for each view, but 
             default to one if we don't. We can do this in both of our templates like so:
           </p>
+          <p><code>blog/templates/blog/index.html</code> and <code>blog/templates/blog/blog.html</code></p>
           <pre>
 &lt;!DOCTYPE html&gt;
 &lt;html lang&#x3D;&quot;en&quot;&gt;
@@ -527,11 +543,13 @@ def blog(request):
             Next, we need to tell Django we are using our own CSS/static files. Add this line to the top of your base 
             HTML template:
           </p>
+          <p><code>blog/templates/blog/base.html</code></p>
           <pre>{% load static %}</pre>
           <p>
             This loads the static files, allowing us to access them. To finally use your CSS you can add the following 
             line to the head of the base template:
           </p>
+          <p><code>blog/templates/blog/base.html</code></p>
           <pre>
 &lt;link rel&#x3D;&quot;stylesheet&quot; href&#x3D;&quot;{% static &#39;blog&#x2F;main.css&#39; %}&quot;&gt;
           </pre>
