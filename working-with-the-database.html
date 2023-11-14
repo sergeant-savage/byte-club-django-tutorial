@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Working with the Database</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <link rel="stylesheet" href="styles/main.css">
+</head>
+
+<body>
+  <section class="section">
+        <div class="box">
+          <h1 class="title is-1">Working With The Database</h1>
+        </div>
+        <div class="box content is-large">
+          <p>
+            In the last lesson, I showed you how to set up URL routes to different views. In this lesson, I'll show 
+            you how to write code that interfaces with the database.
+          </p>
+          <h3>Accessing the Admin Page</h3>
+          <p>
+            If you remember when we were defining routes, we saw that there was an "admin" route already defined. This 
+            route is Django's built-in admin page. It lets us interact with the database, and administrate the site. 
+            Let's navigate to this page right now. Start the server, and then navigate to the <code>admin/</code> route
+             in your browser. You should see something like this:
+          </p>
+          <figure>
+            <img src="img/12_admin_page.png" alt="An image of the admin page">
+          </figure>
+          <p>
+            As you can see, it requires an admin user's credentials to log in. Since we don't have a user creation 
+            screen right now, we can't really make one. Fortunately Django has us covered. To get started with 
+            creating an admin user, run the following command in your terminal:
+          </p>
+          <pre>
+python3 manage.py createsuperuser
+          </pre>
+          <p>
+            If you've been following the tutorial up to this point, it won't work. You'll see an error. Quite a long one 
+            too. But we can get the gist of the error by reading the final line:
+          </p>
+          <pre>django.db.utils.OperationalError: no such table: auth_user</pre>
+          <p>
+            What does this error mean? It boils down to the way SQL (our database program) stores information. In SQL,
+            data is stored in a table, kind of like a spreadsheet. For a database that holds countries, that would look 
+            like so:
+          </p>
+          <figure>
+            <img src="img/13_sql_explainer.png" alt="an SQL table">
+          </figure>
+          <p>
+            The table is the group of all the data entries. In this case, the table is called "world". The database has 
+            several columns, like name, continent, and area. And then below these columns, we have all the entries. What 
+            the error is saying, is that the table that contains "auth_user" (aka, the admin user), doesn't exist in our 
+            database right now. So how do we go about making it? This is where database migrations come into play.
+          </p>
+          <p>
+            Database migrations are a way to prepare and make changes to our database. The very first migration you run in 
+            a Django project automatically sets up the "auth_user" table, so no code is required (this changes when we start
+            using the database more). To prepare for a migration, run the following command:
+          </p>
+          <pre>python3 manage.py makemigrations</pre>
+          <p>
+            This will generate the database code to be run during the migration, although in this case, we haven't 
+            done anything, hence why no changes are detected. The database code is generated in the migrations 
+            directory of your apps, and experienced Django developers may tweak the code to their liking. To run the 
+            migrations, use this command:
+          </p>
+          <pre>python3 manage.py migrate</pre>
+          <p>
+            As you can see, the database was modified, and the "auth_user" table should now be ready. We can now try re-
+            running the command from earlier:
+          </p>
+          <pre>
+python3 manage.py createsuperuser
+          </pre>
+          <p>
+            This will prompt you for details of your user. Fill this out to completion.
+          </p>
+          <blockquote>
+            Note: You may not see anything when typing a password. This is by design so that you may create a password 
+            while being watched.
+          </blockquote>
+          <p>
+            With our new user, we can log in to the admin page. Go ahead and restart the server if you haven't already 
+            and navigate to the <code>admin/</code> site.
+          </p>
+          <p>
+            Once you've logged in, you should be able to see a "Users" and "Groups" menu. If you click on "Groups", you'll 
+            see there are none. If you click on "Users", then you'll see we have the user we just created. You can also 
+            click on this user to see more detail about the user. 
+          </p>
+          <figure>
+            <img src="img/14_admin_page_user.png" alt="An image of a user detail page in the Django admin page.">
+          </figure>
+          <p>
+            As you can see, Django stores our username, a password hash, and some personal info. It is all editable by us.
+            Any changes we make here will be applied to our database.
+          </p
+          <blockquote>
+            A password hash is a way of storing a password by storing it's encrypted version. When the user creates an account,
+            the password is hashed (encrypted), and then stored. When the user goes to log in again, the password they enter is 
+            also hashed, and the 2 are compared. If the hashes match, then the user has entered the same password, so they can 
+            log in.
+          </blockquote>
+          <p>
+            It's pretty common for sites like these to create test users, so lets go ahead and do that. Go back to the user page, 
+            and then click on "Add User". Then, fill out all the details for your test user. I'm calling my test user "MrTest" and 
+            using a password of "testing12". Once done, save and continue editing, so we can continue adding fields, like an email 
+            address. We can also scroll down to see all the permissions this user has. This test user is an active user, but 
+            doesn't have staff status (they can't use the admin page) or superuser status (they have all permissions).
+          </p>
+          <p>
+            Once done, we can go back to the home page, where our actions have been logged on the right.
+          </p>
+          <h3>Creating our own Database Models</h3>
+          <p>
+            Django makes use of an object relational mapper for it's database, and I think it's a good idea to explain what that is 
+            before we write any code. If you recall, under the hood, and SQL database is just a bunch of tables. An ORM helps turn 
+            your code into different tables. That's the object and mapper part - it takes your code for objects and <em>maps</em> it
+             to database tables. The relational part works like this:
+          </p>
+          <figure>
+            <img src="img/15_orm_explainer.png" alt="A picture of ORM">
+          </figure>
+          <p>
+            As you can see, we have a table of books, and a table of authors. The books have IDs, titles, and authors. That last one 
+            points to an entry in the authors table. What this means in practice is that each book has one author, but one author may
+            have many books. These <em>relationships</em> are an example of the relational part of the ORM. Your code can relate 
+            different pieces of data together.
+          </p>
+          <blockquote>
+            Another way to explain an ORM is that your code serves as a blueprint for different database tables. Each field that you 
+            give the model is then used in the database.
+          </blockquote>
+          <p>
+            Now that you know what an ORM is, let's get to using it. Open up the blog's <code>models.py</code>. You should see something 
+            like this:
+          </p>
+          <p><code>blog/models.py</code></p>
+          <pre class="codeblock">
+from django.db import models
+
+# Create your models here.</pre>
+          <p>
+            This <code>models.py</code> file is where we'll model the objects for our ORM - the actual things that go in the database. 
+            Before we jump into that though, lets stop and think about what we need.
+          </p>
+          <p>
+            We are doing a blog app, so we'll definitely need a blog post. Each blog post should have:
+          </p>
+          <ul>
+            <li>a title</li>
+            <li>some content</li>
+            <li>the time when it was last modified</li>
+            <li>And an author</li>
+          </ul>
+          <p>
+            Our title and content will simply be some text. Our author will be a user who is registered. As we know, users already exist 
+            in our database, since we went through all the trouble of creating them. Let's now reflect these pieces of information.
+          </p>
+          <p><code>blog/models.py</code></p>
+          <pre>
+from django.db import models
+
+
+class Post(models.Model):
+    title = models.CharField(
+        max_length=100, help_text="Enter the post's title")
+    content = models.TextField(help_text="Enter the post's content")
+    last_modified = models.DateTimeField(auto_now=True)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+          </pre>
+          <p>
+            Let me break everything down for you. First, we create a class called <code>Post</code> that inherits from 
+            <code>models.Models</code>. This is the "object". Next, we give it some fields, which will become database columns once we 
+            run migrations. First we create a title field, which is a Django character field, with the max length option set to 100 
+            characters, and some help text that will be displayed when we creating a post from the post creation page. Next, we make 
+            content field, and use a Django text field, which just has some help text. We create a "last_modified" field using Django's 
+            datetime field, with the "auto_now" option set to true. This option will automatically change the value for a post's last 
+            modified field to whenever it is modified last. Lastly, we have an author field, which is a foreign key relationship. 
+            "Foreign" means another table, and key just means an entry. In this case, we've specified for a post's author to be an entry 
+            in the users table. The "on_delete" option just specifies what to do when a user is deleted. In this case, we've chosen to 
+            also delete the posts, creating a "cascade" of deletion.
+          </p>
+          <p>
+            Now that we are done creating the models, we must now apply the database migrations associated with them. Run the following 
+            in the terminal:
+          </p>
+          <pre>python3 manage.py makemigrations</pre>
+          <p>
+            As I mentioned above, this code prepares, but doesn't run the database code to create/modify tables. Here, it will create our 
+            post model. To actually run these migrations, run the migrate command:
+          </p>
+          <pre>python3 manage.py migrate</pre>
+          <p>
+            To see the actual SQL run on the database, you can run the following:
+          </p>
+          <pre>python3 manage.py sqlmigrate blog 0001</pre>
+          <p>
+            Here, "blog" is the name of our app, and 0001 is the number of the specific migration, which we can see when we run the 
+            "makemigrations" command. This command spits out a whole bunch of SQL, but we can see that everything we asked for was done. 
+            It creates a table called "blog_post", automatically sets up unique IDs for these posts, as well as a title and content field.
+            It also point to an author ID from the "auth_user" table, which as we saw earlier, contains all our apps users. And like that, 
+            our database code for blog posts is complete.
+          </p>
+          <h3>Database Querying</h3>
+          <p>
+            Now, let's take a look at how to access these database models. Since right now, we don't have any way to create or view them 
+            besides the admin page, we're going to use the Django interactive shell (which is just a Python shell), which will allow us 
+            to access these database models in a programmatic fashion. To get started, run the following in your terminal:
+          </p>
+          <pre>python3 manage.py shell</pre>
+          <p>
+            Now that that is working, let's import both the post and user models. Run the following lines:
+          </p>
+          <pre>
+from blog.models import Post
+from django.contrib.auth.models import User
+          </pre>
+          <p>
+            If you recall, we've just created 2 users, so let's take a look at them. To do this, run the following:
+          </p>
+          <pre>User.objects.all()</pre>
+          <blockquote cite="">
+            All of this code can also be run for the Post model, except since we have no posts, everything will be empty.
+          </blockquote>
+          <p>
+            This returns a queryset of all the users. We can get the first item using the <code>User.objects.first()</code> method 
+            or instead use the last method to do the opposite. To filter, we run this code:
+          </p>
+          <pre>User.objects.filter(username='MrTest')</pre>
+          <p>
+            This code will return all the users whose username is MrTest. We can do this for any field, mind you, like first name or
+             last name, ID, etc. To get the first user that matches this query, we could do 
+            <code>User.objects.filter(username='MrTest').first()</code>.
+          </p>
+          <p>
+            If we want to get a user by ID, we can use the <code>get</code>method, which will get a user based on whatever info we give it.
+            To get a user with an ID of 1, that would look like this.
+          </p>
+          <pre>User.objects.get(id=1)</pre>
+          <blockquote>
+            We can also do this like so:
+            <pre>User.objects.get(pk=1)</pre>
+            "pk" stands for primary key, and is just another name for the unique column for each database entry. In this case, ID and PK mean 
+            the same thing, since our ID is the unique number, hence, it is the primary key
+          </blockquote>
+          <p>
+            Now, let's create a new post. First, let's assign our test variable to our test user by getting it based on ID:
+          </p>
+          <pre>user = User.objects.get(id=1)</pre>
+          <p>
+            Now let's create a post. Run this to create a post object:
+          </p>
+          <pre>post1 = Post(title='first post', content='hello there! this is the first post', author = user)</pre>
+          <p>
+            This code just fills out all the fields, minus the datetime field and the ID field, which are both automatically generated.
+            Now that we've created the post, we can save it to the database, by running the following:
+          </p>
+          <pre>post1.save()</pre>
+          <p>
+            To verify, we can check the post object list, just like we did with our user:
+          </p>
+          <pre>Post.objects.all()</pre>
+          <p>
+            As you can see, the post we just created shows up! However, it's not very descriptive in the query. To change how this appear, we 
+            can define the <code>__str__()</code> method on our object. All this does is change how the object is printed out. Make sure your 
+            <code>models.py</code> to look like the following:
+          </p>
+          <blockquote>
+            Note: The <code>__str__</code> method is special, as it defines how an object looks like when printed out.
+          </blockquote>
+          <p><code>blog/models.py</code></p>
+          <pre>
+from django.db import models
+from django.contrib.auth.models import User
+
+
+class Post(models.Model):
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    title = models.CharField(
+        max_length=100, help_text="Enter the post's title")
+    content = models.TextField(help_text="Enter the post's content")
+    last_modified = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.title
+          </pre>
+          <p>
+            Once you've done that, use <code>exit()</code>to leave the shell, then restart it, and import the <code>Users</code> and 
+            <code>Posts</code>again like we did above. Now if we run <code>Posts.objects.all()</code>, we can see that now the post is shown 
+            as we've asked it to be.
+          </p>
+          <p>
+            Another trick we could do, is create a post using a user ID instead of a concrete user. While this isn't a good idea in practice, 
+            it's a good demonstration of how the SQL we saw above matters. Run the following:
+          </p>
+          <pre>
+post2 = Post(title = 'second', content='number 2!', author_id=1)
+post2.save()
+          </pre> 
+          <p>
+            The reason this works is that in the SQL we saw above, the author column is called "author_id" and holds the ID of the user that 
+            creates the post. In this case, a user of ID 1 corresponds to the very first user we made. We can verify this by running 
+            <code>Post.objects.all()</code>, which will show our new second post. To inspect the details of our new post, let's assign it a 
+            variable.
+          </p>
+          <pre>post = Post.objects.first()</pre>
+          <p>
+            Now, we can check out the details. To access the title, we can do <code>post.title</code>, for the time last modified, we can do 
+            <code>post.last_modified</code>, and to access the author, we can use 
+            <code>post.author</code>. That last one is actually pretty useful, because it actually access the entire user object, meaning we 
+            can access all of it's attributes. For example, to get the post's author's email, we can do <code>post.author.email</code>
+          </p>
+          <p>
+            Another thing we can do is to take a look at all of a user's posts. While we could filter posts by user, Django also has a special 
+            way to do it. First, let's assign a user to a variable
+          </p>
+          <pre>user = User.objects.get(id=1)</pre>
+          <p>
+            This gets the user with ID 1 in a variable. To see all of their posts, run the following:
+          </p>
+          <pre>user.post_set.all()</pre>
+          <p>
+            <code>post_set</code> is an attribute Django has created for us, and it contains all of the posts. To view it, we use the <code>all()</code> 
+            method. We can add to this set by running the following:
+          </p>
+          <pre>user.post_set.create(title ='third', content='number 3')</pre>
+          <p>
+            This will create a post with the author automatically set to the user.
+          </p>
+          <h3>Using our new Posts instead of our Dummy Data in our Templates</h3>
+          <p>
+            Now that we've learned how to query the database, we can now use these queries to provide real data to our templates, instead of just using 
+            dummy data. Open up <code>blog/views.py</code>. 
+          </p>
+          <p>
+            Here we can see that our <code>blog</code>view uses the dummy data we pass into the context. You can go ahead and delete this, since we 
+            won't be using it anymore. Instead, we'll do a database query for all of the post models.
+          </p>
+          <p>
+            First, let's import our Post model so that we can access it. Write the following at the top of the file. 
+          </p>
+          <p><code>blog/views.py</code></p>
+          <pre>
+from .models import Post
+
+# --snip--
+          </pre>
+          <blockquote cite="">
+            We use <code>.models</code> because our models are in the same folder
+          </blockquote>
+          <p>
+            Next, let's edit the blog view so that it runs a database query to get the context:
+          </p>
+          <p><code>blog/views.py</code></p>
+          <pre>
+# --snip--
+
+def blog(request):
+    context = {
+        'posts': Post.objects.all(),
+        'title': 'Blog'
+    }
+    return render(request, 'blog/blog.html', context)
+          </pre>
+          <p>
+            Lastly, make sure your template uses all the correct keys, like so (copy this if need be): 
+          </p>
+          <pre>
+{% extends &quot;blog&#x2F;base.html&quot; %}
+{% block content %}
+  &lt;h1&gt;Byte Club Blog&lt;&#x2F;h1&gt;
+  {% for post in posts %}
+    &lt;h2&gt;{{ post.title }}&lt;&#x2F;h2&gt;
+    &lt;p&gt;by {{ post.author }}. Last modified on {{ post.last_modified }}&lt;&#x2F;p&gt;
+    &lt;p&gt;{{ post.content }}&lt;&#x2F;p&gt;
+  {% endfor %}
+{% endblock content %}
+          </pre>
+          <blockquote>
+            Note: If you want to change the format of last modified field, the full list of options is 
+            <a href="https://docs.djangoproject.com/en/4.2/ref/templates/builtins/#date">here</a>
+          </blockquote>
+          <p>
+            Now, if you restart the server, then navigate to the blog page, you should be able to see all of the post's we created show up. 
+          </p>
+          <h3>Adding our Post model to the Admin Site</h3>
+          <p>
+            Right now, if you navigate to the admin panel, you'll see that our Post model is not present. To get it to show up, we must 
+            register it with our admin page. To do this, open the <code>admin.py</code>file in our blog app. It should look like this:
+          </p>
+          <p><code>blog/admin.py</code></p>
+          <pre>
+from django.contrib import admin
+
+# Register your models here.
+          </pre> 
+          <p>
+            To register our Post model, we must import it and then use the register method. Make sure the file now looks like this:
+          </p>
+          <pre>
+from django.contrib import admin
+from .models import Post
+
+admin.site.register(Post)
+          </pre>
+          <p>
+            Now, if you restart the server, then navigate to the admin site, you'll see that our Post model is now there, and has all of our posts. 
+            You can also create more if you want, as well as update existing ones.
+          </p>
+          <h3>Recap</h3>
+          <p>
+            Alright, that wraps things up for this lesson. We learned about the admin page, creating database models, database migrations, querying 
+            the database, as well as using these queries to provide data from the database to the template.
+          </p>
+          <!-- Consider simply creating a function based page that aggregates a user's post_set instead of making a profile app. -->
+        </div>
+        <div class="box">
+          <nav class="level ">
+            <div class="level-item">
+              <a class="button is-large" href="setting-up-routes.html">Back</a>
+            </div>
+            <div class="level-item has-text-centered">
+              <div>
+                <p class="heading">Page</p>
+                <p class="title">4</p>
+              </div>
+            </div>
+            <div class="level-item">
+              <a class="button is-large" href=".html">Next</a>
+            </div>
+          </nav>
+        </div>
+  </section>
+
+</body>
+
+</html>
